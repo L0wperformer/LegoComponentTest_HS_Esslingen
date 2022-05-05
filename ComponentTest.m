@@ -22,7 +22,7 @@ connectionPanel = uipanel(fig,'Title','Connections','position',[15, zMax- 135,11
 bluetoothConnect = uibutton(fig,'push','Text','via Bluetooth','position',[20, zMax- 70, standartButton],'ButtonPushedFcn',@(bluetoothConnect,event)btConnect());
 usbConnect =   uibutton(fig,'push','Text','via USB','position', [20,zMax - 130, standartButton],'ButtonPushedFcn',@(usbConnect,event)usbConnectFunc());       
 %======Sensors======
-
+sensorPanel = uipanel(fig,'Title','Sensors','position',[400, zMax - 285, 150,300 ]);
 function runEngine(atOutput)
 %===DEBUG===
 disp(atOutput);
