@@ -18,9 +18,10 @@ runEngineC = uibutton(fig,'push','Text','C','position',[225,zMax - 270,standartB
 runEngineD = uibutton(fig,'push','Text','D','position',[225,zMax - 370,standartButton],'ButtonPushedFcn',@(runningEngineD,event) runEngine('D'));
 runTestProgram = uibutton(fig,'push','Text','Test Program','position',[20,zMax - 370,standartButton],'ButtonPushedFcn',@(runningEngineD,event) runEngine('testProgram'));
 %======Connections======
-connectionPanel = uipanel(fig,'Title','Connections','position',[15, zMax- 135,110,150]);
+connectionPanel = uipanel(fig,'Title','Connections','position',[15, zMax- 195,110,210]);
 bluetoothConnect = uibutton(fig,'push','Text','via Bluetooth','position',[20, zMax- 70, standartButton],'ButtonPushedFcn',@(bluetoothConnect,event)btConnect());
 usbConnect =   uibutton(fig,'push','Text','via USB','position', [20,zMax - 130, standartButton],'ButtonPushedFcn',@(usbConnect,event)usbConnectFunc());       
+ethernetConnect = uibutton(fig,'push','Text','via Ethernet','position',[20,zMax - 190,standartButton],'ButtonPushedFcn',@(ethernetConnect,event)ethConnect());
 %======Sensors======
 sensorPanel = uipanel(fig,'Title','Sensors','position',[400, zMax - 285, 150,300 ]);
 function runEngine(atOutput)
@@ -34,5 +35,9 @@ end
 
 function usbConnectFunc()
 disp('connect via USB');
+end
+
+function ethConnect()
+disp('Connect via Ethernet');
 end
 
