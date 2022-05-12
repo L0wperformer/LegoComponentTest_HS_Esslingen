@@ -7,6 +7,9 @@ zMax = 400;
 standartButton = [100,50];
 %Parent figure
 fig = uifigure;
+%slider val
+global sliderVal;
+sliderVal = 50;
 
 %======ENGINES====== 
 uipanel(fig,'Title','Motors','position',[220,zMax - 240,110,255]);
@@ -17,7 +20,7 @@ runEngineD = uibutton(fig,'push','Text','D','position',[225,zMax - 235,standartB
 runTestProgram = uibutton(fig,'push','Text','Test Program','position',[20,zMax - 390,standartButton],'ButtonPushedFcn',@(runningEngineD,event) runEngine('testProgram'));
 %Speed Slider
 speedSliderPanel = uipanel(fig,'Title','Motor speed %','position',[170,zMax-325,210,80]);
-speedSlider = uislider(fig,'Position',[183,zMax-280,180,3],'Limits',[-100,100],'MajorTicks',[-100,-50,0,50,100]);
+speedSlider = uislider(fig,'Position',[183,zMax-280,180,3],'Limits',[-100,100],'MajorTicks',[-100,-50,0,50,100],'ValueChangedFcn',@(speedSlider,event) sliderCallback(speedSlider));
 speedSlider.Value = 50;
 %======Connections======
 uipanel(fig,'Title','Connections','position',[15, zMax- 195,110,210]);
@@ -32,6 +35,7 @@ uipanel(fig,'Title','Ultrasonic','Position',[413,zMax - 125,125,50]);
 sensor2 = uilabel(fig,'Text','Sensor 2','Position',[418,zMax - 135,standartButton],'FontSize',14);
 uipanel(fig,'Title','Gyrosensor','Position',[413,zMax - 180,125,50]);
 sensor3 = uilabel(fig,'Text','Sensor 3','Position',[418,zMax - 190,standartButton],'FontSize',14);
+%======handles for sliders etc======
 
 
 
@@ -40,10 +44,16 @@ sensor3 = uilabel(fig,'Text','Sensor 3','Position',[418,zMax - 190,standartButto
 %==================================================================
 %==========================Functions===============================
 %==================================================================
+%Slider callback
+ function sliderCallback(sld)
+sliderVal = round(sld.Value);
+ end
+
+
 
 
 function runEngine(atOutput)
-
+disp(sliderVal);
 end
 
 function btConnect()
