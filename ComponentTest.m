@@ -17,12 +17,10 @@ runEngineD = uibutton(fig,'push','Text','D','position',[225,zMax - 235,standartB
 runTestProgram = uibutton(fig,'push','Text','Test Program','position',[20,zMax - 390,standartButton],'ButtonPushedFcn',@(runningEngineD,event) runEngine('testProgram'));
 %Speed Slider
 speedSliderPanel = uipanel(fig,'Title','Motor speed %','position',[170,zMax-325,210,80]);
-speedSlider = uislider(fig,'Position',[183,zMax-280,180,3],'MajorTicks',[0,25,50,75,100]);
+speedSlider = uislider(fig,'Position',[183,zMax-280,180,3],'Limits',[-100,100],'MajorTicks',[-100,-50,0,50,100]);
 speedSlider.Value = 50;
 %======Connections======
 uipanel(fig,'Title','Connections','position',[15, zMax- 195,110,210]);
-%(Dont know why I did the buttons in relation to the
-%panel and not to the coordinate system)
 bluetoothConnect = uibutton(fig,'push','Text','via Bluetooth','position',[20, zMax- 70, standartButton],'ButtonPushedFcn',@(bluetoothConnect,event)btConnect());
 usbConnect =   uibutton(fig,'push','Text','via USB','position', [20,zMax - 130, standartButton],'ButtonPushedFcn',@(usbConnect,event)usbConnectFunc());       
 ethernetConnect = uibutton(fig,'push','Text','via Ethernet','position',[20,zMax - 190,standartButton],'ButtonPushedFcn',@(ethernetConnect,event)ethConnect());
@@ -45,8 +43,7 @@ sensor3 = uilabel(fig,'Text','Sensor 3','Position',[418,zMax - 190,standartButto
 
 
 function runEngine(atOutput)
-%===DEBUG===
-disp(atOutput);
+
 end
 
 function btConnect()
