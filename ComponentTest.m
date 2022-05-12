@@ -8,6 +8,8 @@ standartButton = [100,50];
 %Parent figure
 fig = uifigure;
 
+setSliderVal(50);
+
 
 %======ENGINES====== 
 uipanel(fig,'Title','Motors','position',[220,zMax - 240,110,255]);
