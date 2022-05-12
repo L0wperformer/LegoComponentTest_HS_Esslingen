@@ -7,9 +7,8 @@ zMax = 400;
 standartButton = [100,50];
 %Parent figure
 fig = uifigure;
-%slider val
-global sliderVal;
-sliderVal = 50;
+
+
 
 %======ENGINES====== 
 uipanel(fig,'Title','Motors','position',[220,zMax - 240,110,255]);
@@ -45,15 +44,25 @@ sensor3 = uilabel(fig,'Text','Sensor 3','Position',[418,zMax - 190,standartButto
 %==========================Functions===============================
 %==================================================================
 %Slider callback
- function sliderCallback(sld)
-sliderVal = round(sld.Value);
+
+ function setSliderVal(val)
+ global sliderVal;
+ sliderVal = val;
+ end
+ 
+ function ret = getSliderVal
+ global sliderVal;
+ ret = sliderVal;
  end
 
-
-
+ function sliderCallback(sld)
+setSliderVal( round(sld.Value));
+ end
+ 
+ 
 
 function runEngine(atOutput)
-disp(sliderVal);
+disp(getSliderVal);
 end
 
 function btConnect()
