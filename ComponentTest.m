@@ -8,6 +8,7 @@ standartButton = [100,50];
 %Parent figure
 fig = uifigure;
 
+
 %======ENGINES====== 
 uipanel(fig,'Title','Motors','position',[220,zMax - 240,110,255]);
 runEngineA = uibutton(fig,'push','Text','A','position',[225,zMax- 70,standartButton],'ButtonPushedFcn',@(runningEngineA,event) runEngine('A'));
@@ -32,17 +33,11 @@ uipanel(fig,'Title','Ultrasonic','Position',[413,zMax - 125,125,50]);
 sensor2 = uilabel(fig,'Text','Sensor 2','Position',[418,zMax - 135,standartButton],'FontSize',14);
 uipanel(fig,'Title','Gyrosensor','Position',[413,zMax - 180,125,50]);
 sensor3 = uilabel(fig,'Text','Sensor 3','Position',[418,zMax - 190,standartButton],'FontSize',14);
-%======handles for sliders etc======
-
-
-
-
 
 %==================================================================
 %==========================Functions===============================
 %==================================================================
-%Slider callback
-
+%Slider callback and getter and setter
  function setSliderVal(val)
  global sliderVal;
  sliderVal = val;
@@ -52,6 +47,12 @@ sensor3 = uilabel(fig,'Text','Sensor 3','Position',[418,zMax - 190,standartButto
  global sliderVal;
  ret = sliderVal;
  end
+ 
+  function sliderCallback(sld)
+setSliderVal( round(sld.Value));
+  end
+ 
+%getter and setter and DELETE for LEGO object 
  
  function setLego(val)
  global Lego;
@@ -68,10 +69,24 @@ sensor3 = uilabel(fig,'Text','Sensor 3','Position',[418,zMax - 190,standartButto
  ret = Lego;
  end
 
- function sliderCallback(sld)
-setSliderVal( round(sld.Value));
- end
- 
+%Sensors
+function startTimer()
+sensorTimer = timer('ExecutionMode','fixedSpacing','TimerFcn',@(~,~)readSensors()); 
+sensorTimer.start();
+end
+function readSensors()
+gyroReturn = readGyro();
+disp(gyroReturn);
+
+end
+function ret = readGyro
+mygyrosensor = gyroSensor(getLego);  % Gyro definieren
+angle = readRotationAngle(mygyrosensor); % Gyro auslesen
+rate = readRotationRate(mygyrosensor);      % Winkelgeschw. in °/s
+resetRotationAngle(mygyrosensor);        % Gyro reseten
+ret = [angle,rate];
+end
+%engines
  
 
 function runEngine(atOutput)
@@ -81,13 +96,12 @@ start(mymotor)            % Start Motor
 pause(1)                  
 stop(mymotor)             % Stop Motor
 end
-
+%connections
 function btConnect()
 disp('connect via BT');
 end
 
 function usbConnectFunc()
-%setLego (legoev3('usb'));
 clearLego();
 a=exist ('Lego');      % ist die Verbindung schon vorhanden?
 if a==0;               % wenn keine Verbindung dann Verbindung aufbauen
@@ -116,6 +130,7 @@ else
     'USB - Verbindung ','custom',bild);  
     playTone(Lego,1000,0.1,10);% Ton abspielen playTone(myev3,freq,duration,volume)
 end
+startTimer(); %start timer für Sensor auslese
 end
 
 function ethConnect()
