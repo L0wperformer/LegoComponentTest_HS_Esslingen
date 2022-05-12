@@ -8,8 +8,6 @@ standartButton = [100,50];
 %Parent figure
 fig = uifigure;
 
-
-
 %======ENGINES====== 
 uipanel(fig,'Title','Motors','position',[220,zMax - 240,110,255]);
 runEngineA = uibutton(fig,'push','Text','A','position',[225,zMax- 70,standartButton],'ButtonPushedFcn',@(runningEngineA,event) runEngine('A'));
@@ -54,6 +52,21 @@ sensor3 = uilabel(fig,'Text','Sensor 3','Position',[418,zMax - 190,standartButto
  global sliderVal;
  ret = sliderVal;
  end
+ 
+ function setLego(val)
+ global Lego;
+ Lego = val;
+ end
+ 
+ function clearLego()
+ global Lego;
+ delete(Lego);
+ end
+ 
+ function ret = getLego
+ global Lego;
+ ret = Lego;
+ end
 
  function sliderCallback(sld)
 setSliderVal( round(sld.Value));
@@ -62,7 +75,11 @@ setSliderVal( round(sld.Value));
  
 
 function runEngine(atOutput)
-disp(getSliderVal);
+mymotor = motor(getLego,atOutput); % Verbindung zum Motor erstellen ( Motor Anschluss A)
+mymotor.Speed = getSliderVal;       % geschwindigkeit angeben (-100 bis +100)
+start(mymotor)            % Start Motor
+pause(1)                  
+stop(mymotor)             % Stop Motor
 end
 
 function btConnect()
@@ -70,7 +87,35 @@ disp('connect via BT');
 end
 
 function usbConnectFunc()
-disp('connect via USB');
+%setLego (legoev3('usb'));
+clearLego();
+a=exist ('Lego');      % ist die Verbindung schon vorhanden?
+if a==0;               % wenn keine Verbindung dann Verbindung aufbauen
+   setLego(legoev3('usb')); % Verbindung aufbauen 
+   
+   for n=1:1:3
+       playTone(getLego,2000,0.1,50);% Ton abspielen playTone(myev3,freq,duration,volume)
+       pause(0.2)
+   end
+   if  exist ('Lego')
+       if exist('LegoBild.jpg', 'file');  % Brick Bild vorhanden?
+       bild=(imread('LegoBild.jpg'));  % Brick Bild lesen
+       else
+       bild = ones(1,1,3);   % weisses Quadrat
+       end
+   h=msgbox({'   Matlab < USB > Lego Brick' '' 'Verbindung wurde erfolgreich durchgeführt !'},... % Meldungsfenster
+         'USB - Verbindung ','custom',bild); 
+   end
+else
+    if exist('LegoBild.jpg', 'file');  % Brick Bild vorhanden?
+    bild=(imread('LegoBild.jpg'));  % Brick Bild lesen
+    else
+    bild = ones(1,1,3);   % weisses Quadrat
+    end
+    h=msgbox({'    Verbindung schon vorhanden !'},... % Meldungsfenster
+    'USB - Verbindung ','custom',bild);  
+    playTone(Lego,1000,0.1,10);% Ton abspielen playTone(myev3,freq,duration,volume)
+end
 end
 
 function ethConnect()
