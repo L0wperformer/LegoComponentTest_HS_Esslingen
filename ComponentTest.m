@@ -114,7 +114,16 @@ stop(mymotor)             % Stop Motor
 end
 %connections
 function btConnect()
-disp('connect via BT');
+clearLego();
+deviceInfo = instrhwinfo('Bluetooth','EV3'); % ID vom Bluetooh Ger�t
+id=deviceInfo.RemoteID(9:end); %Remote id, nur letzten 12 Zeichen!
+
+% Kommunikation zum LegoEV definieren(Bluetooth)
+if ((exist ('myev3'))==0)% Wenn Verbindung nicht vorhanden..
+   setLego ( legoev3('bt',id)); % ... dann Verbindung aufbauen.
+end
+  playTone(getLego,2000,0.2,60)  %Ton, Verbindung ist da!
+  disp('Verbindung zum EV3 �ber Bluetooth ist aufgebaut')
 end
 
 function usbConnectFunc()
