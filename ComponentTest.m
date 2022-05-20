@@ -77,16 +77,30 @@ sensorTimer = timer('ExecutionMode','fixedSpacing','TimerFcn',@(~,~)readSensors(
 sensorTimer.start();
 end
 function readSensors()
-gyroReturn = readGyro();
-disp(gyroReturn);
-
+ sensor3.Text = readGyro();
+ sensor2.Text = readProx();
+ sensor1.Text = readUS();
 end
 function ret = readGyro
 mygyrosensor = gyroSensor(getLego);  % Gyro definieren
 angle = readRotationAngle(mygyrosensor); % Gyro auslesen
 rate = readRotationRate(mygyrosensor);      % Winkelgeschw. in °/s
 resetRotationAngle(mygyrosensor);        % Gyro reseten
-ret = [angle,rate];
+ret = [angle,' °',rate,' °/s'];
+end
+
+function ret = readProx
+mytouchsensor = touchSensor(getLego);% Taster definieren
+if(readTouch(mytouchsensor))% Taster Zustand
+    ret = 'Pressed';
+else
+    ret = '';
+end
+end
+
+function ret = readUS
+mysonicsensor = sonicSensor(getLego);      %US Sensor definieren
+ret = [ readDistance(mysonicsensor),' m']; %US Sensor auslesen [meter]
 end
 %engines
  
