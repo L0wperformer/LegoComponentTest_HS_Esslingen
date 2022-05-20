@@ -9,6 +9,9 @@ standartButton = [100,50];
 fig = uifigure;
 
 setSliderVal(50);
+delete(timerfind);
+
+
 
 
 %======ENGINES====== 
@@ -17,7 +20,7 @@ runEngineA = uibutton(fig,'push','Text','A','position',[225,zMax- 70,standartBut
 runEngineB = uibutton(fig,'push','Text','B','position',[225,zMax - 125,standartButton],'ButtonPushedFcn',@(runningEngineB,event) runEngine('B'));
 runEngineC = uibutton(fig,'push','Text','C','position',[225,zMax - 180,standartButton],'ButtonPushedFcn',@(runningEnginC,event) runEngine('C'));
 runEngineD = uibutton(fig,'push','Text','D','position',[225,zMax - 235,standartButton],'ButtonPushedFcn',@(runningEngineD,event) runEngine('D'));
-runTestProgram = uibutton(fig,'push','Text','Test Program','position',[20,zMax - 390,standartButton],'ButtonPushedFcn',@(runningEngineD,event) runEngine('testProgram'));
+runTestProgram = uibutton(fig,'push','Text','Test Program','position',[20,zMax - 390,standartButton],'ButtonPushedFcn',@(runningEngineD,event) testProgram());
 %Speed Slider
 speedSliderPanel = uipanel(fig,'Title','Motor speed %','position',[170,zMax-325,210,80]);
 speedSlider = uislider(fig,'Position',[183,zMax-280,180,3],'Limits',[-100,100],'MajorTicks',[-100,-50,0,50,100],'ValueChangedFcn',@(speedSlider,event) sliderCallback(speedSlider));
@@ -49,7 +52,7 @@ end
 %==================================================================
 %==========================Functions===============================
 %==================================================================
-%Slider callback and getter and setter
+%======Slider callback and getter and setter======
  function setSliderVal(val)
  global sliderVal;
  sliderVal = val;
@@ -64,8 +67,7 @@ end
 setSliderVal( round(sld.Value));
   end
  
-%getter and setter and DELETE for LEGO object 
- 
+%======getter and setter and DELETE for LEGO object======
  function setLego(val)
  global Lego;
  Lego = val;
@@ -81,23 +83,25 @@ setSliderVal( round(sld.Value));
  ret = Lego;
  end
 
-%Sensors
+%======Sensors======
 function startTimer()
 sensorTimer = timer('ExecutionMode','fixedSpacing','TimerFcn',@(~,~)readSensors()); 
 sensorTimer.start();
 end
+
 function readSensors()
  sensors = getSensors;
  sensors(1).Text = readGyro();
  sensors(2).Text = readUS();
  sensors(3).Text = readProx();
 end
+
 function ret = readGyro
 mygyrosensor = gyroSensor(getLego);  % Gyro definieren
 angle = readRotationAngle(mygyrosensor); % Gyro auslesen
 rate = readRotationRate(mygyrosensor);      % Winkelgeschw. in °/s
 resetRotationAngle(mygyrosensor);        % Gyro reseten
-ret = [num2str(angle),' °',num2str(rate),' °/s'];
+ret = [num2str(angle),' °       ',num2str(rate),' °/s'];
 end
 
 function ret = readProx
@@ -113,9 +117,8 @@ function ret = readUS
 mysonicsensor = sonicSensor(getLego);      %US Sensor definieren
 ret = [num2str( readDistance(mysonicsensor)),' m']; %US Sensor auslesen [meter]
 end
-%engines
- 
 
+%======engines======
 function runEngine(atOutput)
 mymotor = motor(getLego,atOutput); % Verbindung zum Motor erstellen ( Motor Anschluss A)
 mymotor.Speed = getSliderVal;       % geschwindigkeit angeben (-100 bis +100)
@@ -123,7 +126,38 @@ start(mymotor)            % Start Motor
 pause(1)                  
 stop(mymotor)             % Stop Motor
 end
-%connections
+
+function testProgram()
+leftEngine= motor(getLego,'A');
+leftEngine.Speed=(80);
+rightEngine= motor(getLego,'B');
+rightEngine.Speed=(80);
+
+start(leftEngine);
+start(rightEngine);
+pause(0.5);
+leftEngine.Speed = (-80);
+rightEngine.Speed = (-80);
+pause(0.5);
+leftEngine.Speed = (+80);
+pause(1);
+leftEngine.Speed = (-80);
+rightEngine.Speed = (+80);
+pause(1);
+stop(leftEngine);
+stop(rightEngine);
+
+middleEngine = motor(getLego,'C');
+middleEngine.Speed = 50;
+start(middleEngine);
+pause(1);
+middleEngine.Speed = (-50);
+pause(1);
+stop(middleEngine);
+
+end
+
+%======connections======
 function btConnect()
 clearLego();
 deviceInfo = instrhwinfo('Bluetooth','EV3'); % ID vom Bluetooh Ger�t
@@ -147,29 +181,12 @@ if a==0;               % wenn keine Verbindung dann Verbindung aufbauen
        playTone(getLego,2000,0.1,50);% Ton abspielen playTone(myev3,freq,duration,volume)
        pause(0.2)
    end
-   if  exist ('Lego')
-       if exist('LegoBild.jpg', 'file');  % Brick Bild vorhanden?
-       bild=(imread('LegoBild.jpg'));  % Brick Bild lesen
-       else
-       bild = ones(1,1,3);   % weisses Quadrat
-       end
-   h=msgbox({'   Matlab < USB > Lego Brick' '' 'Verbindung wurde erfolgreich durchgeführt !'},... % Meldungsfenster
-         'USB - Verbindung ','custom',bild); 
-   end
-else
-    if exist('LegoBild.jpg', 'file');  % Brick Bild vorhanden?
-    bild=(imread('LegoBild.jpg'));  % Brick Bild lesen
-    else
-    bild = ones(1,1,3);   % weisses Quadrat
-    end
-    h=msgbox({'    Verbindung schon vorhanden !'},... % Meldungsfenster
-    'USB - Verbindung ','custom',bild);  
-    playTone(Lego,1000,0.1,10);% Ton abspielen playTone(myev3,freq,duration,volume)
-end
 startTimer(); %start timer für Sensor auslese
+end
 end
 
 function ethConnect()
+clearLego();
 disp('Connect via Ethernet');
 end
 
