@@ -35,6 +35,16 @@ uipanel(fig,'Title','Ultrasonic','Position',[413,zMax - 125,125,50]);
 sensor2 = uilabel(fig,'Text','Sensor 2','Position',[418,zMax - 135,standartButton],'FontSize',14);
 uipanel(fig,'Title','Gyrosensor','Position',[413,zMax - 180,125,50]);
 sensor3 = uilabel(fig,'Text','Sensor 3','Position',[418,zMax - 190,standartButton],'FontSize',14);
+setSensors(sensor3,sensor2,sensor1);
+
+function ret = getSensors
+global sensor_labels;
+ret = sensor_labels;
+end
+function setSensors(sensor3,sensor2,sensor1)
+global sensor_labels;
+sensor_labels = [sensor3,sensor2,sensor1];
+end
 
 %==================================================================
 %==========================Functions===============================
@@ -77,16 +87,17 @@ sensorTimer = timer('ExecutionMode','fixedSpacing','TimerFcn',@(~,~)readSensors(
 sensorTimer.start();
 end
 function readSensors()
- sensor3.Text = readGyro();
- sensor2.Text = readProx();
- sensor1.Text = readUS();
+ sensors = getSensors;
+ sensors(1).Text = readGyro();
+ sensors(2).Text = readUS();
+ sensors(3).Text = readProx();
 end
 function ret = readGyro
 mygyrosensor = gyroSensor(getLego);  % Gyro definieren
 angle = readRotationAngle(mygyrosensor); % Gyro auslesen
 rate = readRotationRate(mygyrosensor);      % Winkelgeschw. in °/s
 resetRotationAngle(mygyrosensor);        % Gyro reseten
-ret = [angle,' °',rate,' °/s'];
+ret = [num2str(angle),' °',num2str(rate),' °/s'];
 end
 
 function ret = readProx
@@ -94,13 +105,13 @@ mytouchsensor = touchSensor(getLego);% Taster definieren
 if(readTouch(mytouchsensor))% Taster Zustand
     ret = 'Pressed';
 else
-    ret = '';
+    ret = 'Not Pressed';
 end
 end
 
 function ret = readUS
 mysonicsensor = sonicSensor(getLego);      %US Sensor definieren
-ret = [ readDistance(mysonicsensor),' m']; %US Sensor auslesen [meter]
+ret = [num2str( readDistance(mysonicsensor)),' m']; %US Sensor auslesen [meter]
 end
 %engines
  
